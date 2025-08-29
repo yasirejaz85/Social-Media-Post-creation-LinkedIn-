@@ -1,0 +1,343 @@
+{
+  "name": "Linkedin Post + Image",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Post Title",
+        "formDescription": "Test",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Post Title"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        -16
+      ],
+      "id": "4743f237-f6d7-4d5b-94f0-fdfa930b7b4c",
+      "name": "On form submission",
+      "webhookId": "ff84e061-535b-4253-8f18-9b87bec25e79"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        336
+      ],
+      "id": "15f0fdb6-9399-4dc8-a402-42dd160417bb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "G4RMmmxJQJN0T2lO",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Qxmf0fbkuAtk9A5xnfH-zmePpj60NWJwFvkdsvvw7kQ",
+          "mode": "list",
+          "cachedResultName": " Content Ideas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qxmf0fbkuAtk9A5xnfH-zmePpj60NWJwFvkdsvvw7kQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Qxmf0fbkuAtk9A5xnfH-zmePpj60NWJwFvkdsvvw7kQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Post": "={{ $json.output }}",
+            "Topic ": "={{ $('On form submission').item.json[\"Post Title\"] }}",
+            "Image URL": "={{ $json.secure_url }}",
+            "Image": "=={{ '=IMAGE(\"' + $json[\"secure_url\"] + '\")' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Topic ",
+              "displayName": "Topic ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Post",
+              "displayName": "Post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Image URL",
+              "displayName": "Image URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Image",
+              "displayName": "Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1104,
+        -160
+      ],
+      "id": "726f2b4f-c331-408a-a035-c75e1e5211a0",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "eWKDfGPhGcCc4cqh",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Linkedin Post:\n {{ $json.output }}\n\n",
+        "options": {
+          "systemMessage": "#Overview\n\nYou are an AI agent that transforms LinkedIn posts into visual prompt descriptions for generating graphic marketing materials. These visuals are designed to be paired with the post on LinkedIn, helping communicate the message in a visually engaging, brand-aligned way.\n\nObjective\n\nRead and analyze the given LinkedIn post.\n\nIdentify the main message, insight, or takeaway from the post.\n\nCreate a clear and compelling graphic prompt that can be used with a text-to-image generator.\n\nThe result should be a marketing-style graphic — not a literal scene or hyperrealistic photo — that:\n\nVisually supports or illustrates the key idea of the post\n\nLooks appropriate for use in a professional LinkedIn feed\n\nFeels polished, modern, and engaging\n\nOutput Instructions\n\nOutput only the final image prompt. Do not output quotation marks.\n\nDo not repeat or rephrase the LinkedIn post.\n\nDo not add any explanations or extra content — just the image prompt.\n\nNever leave things blank like “Header area reserved for customizable callout text.”\n\nOutput numeric stats when available in the original post.\n\nStyle Guidelines\n\nThink like a brand designer or marketing creative.\n\nVisuals may include: text, charts, icons, abstract shapes, overlays, modern illustrations, motion-like effects, bold typography elements (described, not rendered), or metaphorical concepts.\n\nYou can mention layout suggestions (e.g., “split screen design,” “header with bold title and subtle background illustration”).\n\nAssume the output will be generated using AI image tools — your prompt should guide those tools effectively.\n\nExample Prompt Format\n\nA modern flat-style graphic showing a human brain connected to mechanical gears, representing the fusion of AI and automation. Minimalist background, soft gradients, clean sans-serif text placement space at the top."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        64
+      ],
+      "id": "1b56fc28-1b07-417e-83fa-80fbb386a499",
+      "name": "Image Prompt Agent"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        480,
+        64
+      ],
+      "id": "b86f099b-f223-4255-a485-ad813602fce5",
+      "name": "create image",
+      "credentials": {
+        "openAiApi": {
+          "id": "G4RMmmxJQJN0T2lO",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=When you receive a post title form\n {{ $json['Post Title'] }}\n\ngenerate a 200 words linkedin post content on it with emojis and structure it according to linkedin post with proper hashtags.",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "8ca5fd7b-da8b-441d-a015-bc642ab97aa6",
+      "name": "Linkedin Post Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/ducyjckio/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "n8n_unsigned"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        64
+      ],
+      "id": "5fdb7a67-dd75-412d-9a6e-29e750de519b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        880,
+        -160
+      ],
+      "id": "f7a7a53a-f739-48ee-85d9-c9fdc56a0494",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Linkedin Post Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Linkedin Post Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Image Prompt Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Image Prompt Agent": {
+      "main": [
+        [
+          {
+            "node": "create image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create image": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Linkedin Post Agent": {
+      "main": [
+        [
+          {
+            "node": "Image Prompt Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e3f605be-a811-4938-8066-90b9355e2d71",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0b3dde5db3ede9106b961d7e9fdc4e4b26bcc84277b7dd2b546aab8d750487a"
+  },
+  "id": "0qks62V4GTX6hwHB",
+  "tags": []
+}
